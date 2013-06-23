@@ -10,13 +10,13 @@ class Parser:
         
         
     def __init__(self, stringAppendToFront, stringAppendToEnd, removeFirstInstanceOfStringsInList, removeAllInstancesOfStringsInList,
-                  substringsToPreserve, oldSeparators, separatorToUse, breakUpByBraces, 
+                  substringsToPreserve, oldSeperators, seperatorToUse, breakUpByBraces, 
                  breakUpByParens, 
                  breakUpByBrackets, breakUpByCamelCase, originalString):
         
         #self.substringsToPreserve = substringsToPreserve       #may not make instance variable
-        self.oldSeparators        = oldSeparators
-        self.separatorToUse       = separatorToUse
+        self.oldSeperators        = oldSeperators
+        self.seperatorToUse       = seperatorToUse
         
         self.breakUpByBraces    = breakUpByBraces
         self.breakUpByParens    = breakUpByParens
@@ -30,8 +30,8 @@ class Parser:
         
         
         preservedList = self.stringToListPreserveStringsInList(self.outputString, substringsToPreserve)
-        replacedList  = self.replaceInstancesOfElementInListWithItem(preservedList, oldSeparators, 
-                                                                 separatorToUse, substringsToPreserve)
+        replacedList  = self.replaceInstancesOfElementInListWithItem(preservedList, oldSeperators, 
+                                                                 seperatorToUse, substringsToPreserve)
         self.outputString = self.lexemeListToString(replacedList).strip()
         
         for substring in removeAllInstancesOfStringsInList:
@@ -170,20 +170,20 @@ class Parser:
         return endBlocks
     
     
-    def findIndexOfFirstInstance(self, startingIndex, blockType, separator):
+    def findIndexOfFirstInstance(self, startingIndex, blockType, seperator):
         indexOfResult = -1 # -1 indicates no instance found
         
         for i in range(startingIndex, len(self.lexer.tokenList)):
             if(self.lexer.tokenList[i][0] == blockType):
-                if(self.lexer.lookupTable[i] == separator):
+                if(self.lexer.lookupTable[i] == seperator):
                     indexOfResult = i
                     break
                 
         return indexOfResult
     
-    def findIndexOfFirstEndBlock(self, startIndex, separatorType):
+    def findIndexOfFirstEndBlock(self, startIndex, seperatorType):
         blockType = self.END_BLOCK
-        return self.findIndexOfFirstInstance(startIndex, blockType, separatorType)
+        return self.findIndexOfFirstInstance(startIndex, blockType, seperatorType)
     
     def findIndexOfFirstBraceEndBlock(self, startIndex, lookupTable, tokens):
         return self.findIndexOfFirstEndBlock(startIndex, "}")
