@@ -20,12 +20,12 @@ class FileNamePurifierGUI(Frame):
     
     #important instance variables:
     """
-    Separators:
+    New Separators:
     
     self.spacesButton
     self.underscoresButton
     self.camelcaseButton
-    self.finalCustomSeparator
+    self.finalCustomNewSeparator
     self.periodButton
     """
     """
@@ -51,15 +51,15 @@ class FileNamePurifierGUI(Frame):
     """
     
     """
-    #newSeparator is a string because self.finalCustomSeparator is a string
+    #newSeparator is a string because self.finalCustomNewSeparator is a string
     newSeparator = " "
     
     if(self.underscoresButton.get()):
         newSeparator = "_"
     elif(self.camelcaseButton.get()):
         pass
-    elif(len(self.finalCustomSeparator) > 0):
-        newSeparator = self.finalCustomSeparator
+    elif(len(self.finalCustomNewSeparator) > 0):
+        newSeparator = self.finalCustomNewSeparator
     elif(self.periodButton.get()):
         newSeparator = "."
     
@@ -95,7 +95,7 @@ class FileNamePurifierGUI(Frame):
     
     def addSubMenus(self):
         
-        self.createSeparatorMenu()
+        self.createNewSeparatorMenu()
         
         self.addSubCheckbuttons()
     
@@ -207,10 +207,10 @@ class FileNamePurifierGUI(Frame):
         self.optionsMenu.add_cascade(label="Character to Break Up By", menu=self.charBreakUpBy)
         
     
-    def submitCustomSeparator(self):
-        self.finalCustomSeparator = self.customSeparator.get("0.0", END)
+    def submitCustomNewSeparator(self):
+        self.finalCustomNewSeparator = self.customNewSeparator.get("0.0", END)
     
-    def customSeparatorFrame(self):
+    def customNewSeparatorFrame(self):
         root = Tk()
         
         frame= Frame(root)
@@ -218,43 +218,43 @@ class FileNamePurifierGUI(Frame):
         frame.pack(fill=BOTH, expand=1)
         
         
-        self.customSeparator = Text(frame)
-        self.customSeparator.config(width = 80, height = 1)
-        self.customSeparator.pack()
+        self.customNewSeparator = Text(frame)
+        self.customNewSeparator.config(width = 80, height = 1)
+        self.customNewSeparator.pack()
         
         
-        submitButton = Button(frame, text="Submit", command=self.submitCustomSeparator)
+        submitButton = Button(frame, text="Submit", command=self.submitCustomNewSeparator)
         submitButton.pack()
         
-        root.title("Enter a custom separator:")
+        root.title("Enter a custom new separator:")
         
 
         root.mainloop() 
 
     
-    def createSeparatorMenu(self):
-        self.separatorCharMenu = Menu(self.optionsMenu, tearoff=0)
+    def createNewSeparatorMenu(self):
+        self.newSeparatorMenu = Menu(self.optionsMenu, tearoff=0)
         
         self.spacesButton      = BooleanVar()
         self.underscoresButton = BooleanVar()
         
-        self.separatorCharMenu.add_checkbutton(label="Spaces", onvalue=True, offvalue=False, variable=self.spacesButton)
+        self.newSeparatorMenu.add_checkbutton(label="Spaces", onvalue=True, offvalue=False, variable=self.spacesButton)
         
         self.spacesButton.set(True)
         
-        self.separatorCharMenu.add_checkbutton(label="Underscores", onvalue=True, offvalue=False, variable=self.underscoresButton)
+        self.newSeparatorMenu.add_checkbutton(label="Underscores", onvalue=True, offvalue=False, variable=self.underscoresButton)
         
             
-        self.separatorCharMenu.add_command(label="Custom Separator", command=self.customSeparatorFrame)
+        self.newSeparatorMenu.add_command(label="Custom New Separator", command=self.customNewSeparatorFrame)
 
         
         self.camelcaseButton  = BooleanVar()
         self.periodButton     = BooleanVar()
         
-        self.separatorCharMenu.add_checkbutton(label="CamelCase", onvalue=True, offvalue=False, variable=self.camelcaseButton)
-        self.separatorCharMenu.add_checkbutton(label="Period", onvalue=True, offvalue=False, variable=self.periodButton)
+        self.newSeparatorMenu.add_checkbutton(label="CamelCase", onvalue=True, offvalue=False, variable=self.camelcaseButton)
+        self.newSeparatorMenu.add_checkbutton(label="Period", onvalue=True, offvalue=False, variable=self.periodButton)
         
-        self.optionsMenu.add_cascade(label="Separator Character", menu=self.separatorCharMenu)
+        self.optionsMenu.add_cascade(label="New Separator Character", menu=self.newSeparatorMenu)
 
          
     
