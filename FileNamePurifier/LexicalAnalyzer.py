@@ -15,13 +15,6 @@ class LexicalAnalyzer:
         self.tokenList   = tokenListAndLookupTable[0]
         self.lookupTable = tokenListAndLookupTable[1]
     
-    def allAllElementsToSet(self, listToGetElementsFrom, setToAddElementsTo):
-        newSet = set(setToAddElementsTo)
-        
-        for element in listToGetElementsFrom:
-            newSet.add(element)
-        return newSet
-    
     def addAllElementsInAllListsToSet(self, listOfListsWithElementsToAdd, setToAddElementsTo):
         newSet = set(setToAddElementsTo)
         for listWithElements in listOfListsWithElementsToAdd:
@@ -43,7 +36,7 @@ class LexicalAnalyzer:
     def convertLexemeToType(self, lexeme):
         blockType = self.LITERAL_BLOCK
         
-        if(lexeme in self.beginBlockList):
+        if(lexeme in self.beginBlockList or ( (lexeme >= "A" and lexeme <= "Z") and self.camelCaseAsDelimiter and len(lexeme) == 1)):
             blockType = self.BEGIN_BLOCK
         elif(lexeme in self.endBlockList):
             blockType = self.END_BLOCK

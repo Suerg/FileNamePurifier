@@ -30,7 +30,7 @@ lexer = LexicalAnalyzer("[otakuFanSubs] anime [720p]", ["(", "[", "{"], [")", "]
 #print lexer.lookupTable
 #print lexer.tokenList           
 
-parser = Parser("", "", [], [], [], [], "", True, True, True, False, "[otakuFanSubs] anime [720p bullshit goes here]")                   
+parser = Parser("", "", [], [], [], [], "", True, True, True, False, "[otakuFanSubs] animeName [720p][218C38]")                   
 
 print parser.outputString
 
