@@ -355,12 +355,14 @@ class Parser:
         return smallestIndex
         
     def constructString(self):
-        #TODO: fix bug where entire string is replaced with resolution string
-        
         outputStrings = list()
+        
+        currentString = ""
         
         for currentTokenNumber in range(len(self.lexer.tokenList)):
             if(self.lexer.tokenList[currentTokenNumber][0] == self.BEGIN_BLOCK):
+                outputStrings.append(currentString)
+                
                 indexOfLexeme   = self.lexer.tokenList[currentTokenNumber][1]
                 indexOfEndBlock = self.findIndexLexemeEndBlock(indexOfLexeme)
                 
@@ -371,9 +373,11 @@ class Parser:
                         outputStrings.append(purifiedLexemeList)
                     
                     currentTokenNumber = indexOfEndBlock
-            elif(self.lexer.tokenList[currentTokenNumber][0] != self.END_BLOCK):
-                end   = self.firstInstanceOfBeginOrEndBlock(currentTokenNumber)
-                block = self.buildLexemeList(currentTokenNumber, end)
-                outputStrings.append(self.lexemeListToString(block))
-        
+                    
+            elif(self.lexer.tokenList[currentTokenNumber][0] == self.END_BLOCK):
+                currentString = ""
+                
+            else:
+                currentString += self.lexer.lookupTable[self.lexer.tokenList[currentTokenNumber][1]]
+                
         return outputStrings
