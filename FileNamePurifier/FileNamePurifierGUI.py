@@ -3,6 +3,11 @@ from ttk import Frame, Button
 from tkFileDialog import askdirectory
 from Tkconstants import DISABLED, NORMAL, END
 
+from FileNamePurifier import FileNamePurifier
+from FileSelectorAndPurifier import FileSelectorAndPurifier
+
+import os
+
 class FileNamePurifierGUI(Frame):
     appWidth  = 480
     appHeight = 360
@@ -77,22 +82,63 @@ class FileNamePurifierGUI(Frame):
         self.centerWindow()
         
         self.dir_opt = {}
+        
+        self.finalAppendToEndText = ""
+        self.finalAppendToFrontText = ""
+        self.finalRemoveFirstInstanceText = ""
     
     def askDirectory(self):
-        self.addDirectoryText(askdirectory(**self.dir_opt))
+        self.addDirectoryText(askdirectory(**self.dir_opt).rstrip('\r\n'))
         
     def addDirectoryText(self, stringToAdd):
         
         self.directoryText.config(state = NORMAL)
         self.directoryText.delete("0.0", END)
-        self.directoryText.insert("0.0", stringToAdd)
+        self.directoryText.insert("0.0", stringToAdd.rstrip('\r\n'))
         self.directoryText.config(state = DISABLED)
 
+    def GetNewSeparator(self):
+        newSeparator = ""
+        
+        if(self.spacesButton.get()):
+            newSeparator = " ";
+        
+        elif(self.underscoresButton.get()):
+            newSeparator = "_";
+        
+        elif(self.camelcaseButton.get()):
+            #TODO: implement seperate by camelcase
+            pass
+        
+        elif(self.periodButton.get()):
+            newSeparator = "."
+        
+        elif(len(self.finalCustomSeparator) > 0):
+            newSeparator = self.finalCustomSeparator
+        
+        return newSeparator
+    
+    def CreatePurifierForOptions(self):
+        
+        purifier = FileNamePurifier(self.finalAppendToFrontText, self.finalAppendToEndText, 
+                    [self.finalRemoveFirstInstanceText], [],
+                  [], [" ", "_"], self.GetNewSeparator(), self.breakUpByBraces.get(), 
+                 self.breakUpByParens.get(), 
+                 self.breakUpByBrackets.get(), self.breakUpByCamelCase.get())
+        
+        return purifier
     
     def purifyFiles(self):
         if(hasattr(self, "finalRemoveFirstInstanceText")):
-            self.addDirectoryText(self.finalRemoveFirstInstanceText)
-    
+            #self.addDirectoryText(self.finalRemoveFirstInstanceText)
+            pass
+        
+        if(len(self.directoryText.get("0.0", END)) > 0):            
+            selectorAndPurifier = FileSelectorAndPurifier(self.affectSubfolders.get(), self.cleanFolderNames.get(), 
+                                        self.directoryText.get("0.0", END), self.CreatePurifierForOptions())
+            
+            selectorAndPurifier.PurifyFileNames()
+        
     def addSubMenus(self):
         
         self.createSeparatorMenu()
@@ -188,7 +234,7 @@ class FileNamePurifierGUI(Frame):
         self.optionsMenu.add_cascade(label="Append Text", menu=self.appendText)
         
     def createBreakUpByMenu(self):
-        self.charBreakUpBy          = Menu(self.optionsMenu, tearoff=0)
+        self.delimitersMenu          = Menu(self.optionsMenu, tearoff=0)
         
         self.breakUpByBraces        = BooleanVar()
         self.breakUpByParens        = BooleanVar()
@@ -198,13 +244,13 @@ class FileNamePurifierGUI(Frame):
         self.breakUpByParens.set(True)
         self.breakUpByBrackets.set(True)
         
-        self.charBreakUpBy.add_checkbutton(label="Braces", onvalue=True, offvalue=False, variable=self.breakUpByBraces)
-        self.charBreakUpBy.add_checkbutton(label="Parentheses", onvalue=True, offvalue=False, variable=self.breakUpByParens)
-        self.charBreakUpBy.add_checkbutton(label="Brackets", onvalue=True, offvalue=False, variable=self.breakUpByBrackets)
-        self.charBreakUpBy.add_checkbutton(label="CamelCase", onvalue=True, offvalue=False, variable=self.breakUpByCamelCase)
+        self.delimitersMenu.add_checkbutton(label="Braces", onvalue=True, offvalue=False, variable=self.breakUpByBraces)
+        self.delimitersMenu.add_checkbutton(label="Parentheses", onvalue=True, offvalue=False, variable=self.breakUpByParens)
+        self.delimitersMenu.add_checkbutton(label="Brackets", onvalue=True, offvalue=False, variable=self.breakUpByBrackets)
+        self.delimitersMenu.add_checkbutton(label="CamelCase", onvalue=True, offvalue=False, variable=self.breakUpByCamelCase)
         
         
-        self.optionsMenu.add_cascade(label="Character to Break Up By", menu=self.charBreakUpBy)
+        self.optionsMenu.add_cascade(label="Delimiters", menu=self.delimitersMenu)
         
     
     def submitCustomSeparator(self):
@@ -233,28 +279,28 @@ class FileNamePurifierGUI(Frame):
 
     
     def createSeparatorMenu(self):
-        self.separatorCharMenu = Menu(self.optionsMenu, tearoff=0)
+        self.newSeparatorMenu = Menu(self.optionsMenu, tearoff=0)
         
         self.spacesButton      = BooleanVar()
         self.underscoresButton = BooleanVar()
         
-        self.separatorCharMenu.add_checkbutton(label="Spaces", onvalue=True, offvalue=False, variable=self.spacesButton)
+        self.newSeparatorMenu.add_checkbutton(label="Spaces", onvalue=True, offvalue=False, variable=self.spacesButton)
         
         self.spacesButton.set(True)
         
-        self.separatorCharMenu.add_checkbutton(label="Underscores", onvalue=True, offvalue=False, variable=self.underscoresButton)
+        self.newSeparatorMenu.add_checkbutton(label="Underscores", onvalue=True, offvalue=False, variable=self.underscoresButton)
         
             
-        self.separatorCharMenu.add_command(label="Custom Separator", command=self.customSeparatorFrame)
+        self.newSeparatorMenu.add_command(label="Custom Separator", command=self.customSeparatorFrame)
 
         
         self.camelcaseButton  = BooleanVar()
         self.periodButton     = BooleanVar()
         
-        self.separatorCharMenu.add_checkbutton(label="CamelCase", onvalue=True, offvalue=False, variable=self.camelcaseButton)
-        self.separatorCharMenu.add_checkbutton(label="Period", onvalue=True, offvalue=False, variable=self.periodButton)
+        self.newSeparatorMenu.add_checkbutton(label="CamelCase", onvalue=True, offvalue=False, variable=self.camelcaseButton)
+        self.newSeparatorMenu.add_checkbutton(label="Period", onvalue=True, offvalue=False, variable=self.periodButton)
         
-        self.optionsMenu.add_cascade(label="Separator Character", menu=self.separatorCharMenu)
+        self.optionsMenu.add_cascade(label="New Separator", menu=self.newSeparatorMenu)
 
          
     

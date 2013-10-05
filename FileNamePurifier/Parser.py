@@ -222,6 +222,7 @@ class Parser:
         resolutionSet.add("1080p")
         resolutionSet.add("640x480")
         resolutionSet.add("800x480")
+        resolutionSet.add("848x480")
         resolutionSet.add("720x480")
         resolutionSet.add("854x480")
         resolutionSet.add("1280x720")

@@ -6,7 +6,7 @@ class FileNamePurifier:
     def __init__(self, stringAppendToFront, stringAppendToEnd, removeFirstInstanceOfStringsInList, removeAllInstancesOfStringsInList,
                   substringsToPreserve, oldSeperators, seperatorToUse, breakUpByBraces, 
                  breakUpByParens, 
-                 breakUpByBrackets, breakUpByCamelCase, startLocation):
+                 breakUpByBrackets, breakUpByCamelCase):
         
         self.stringAppendToFront = stringAppendToFront
         self.stringAppendToEnd   = stringAppendToEnd
@@ -24,27 +24,39 @@ class FileNamePurifier:
         self.breakUpByBrackets  = breakUpByBrackets
         self.breakUpByCamelCase = breakUpByCamelCase
         
+        print self.stringAppendToFront
+        print self.stringAppendToEnd
         
-lexer = LexicalAnalyzer("[otakuFanSubs] anime [720p]", ["(", "[", "{"], [")", "]", "}"], [" "], True)
-
-#print lexer.lookupTable
-#print lexer.tokenList           
-
-parser = Parser("", "", [], [], [], [], "", True, True, True, False, "[otakuFanSubs] animeName [720p][218C38]")                   
-
-print parser.outputString
-
-"""
-stringAppendToFront, 
-stringAppendToEnd, 
-removeFirstInstanceOfStringsInList, 
-removeAllInstancesOfStringsInList, 
-substringsToPreserve, 
-oldSeperators, 
-seperatorToUse, 
-breakUpByBraces, 
-breakUpByParens, 
-breakUpByBrackets, 
-breakUpByCamelCase, 
-originalString):
-"""
+        print '[%s]' % ', '.join(map(str, self.removeFirstInstanceOfStringsInList)) 
+        print '[%s]' % ', '.join(map(str, self.removeAllInstancesOfStringsInList))
+        
+        print '[%s]' % ', '.join(map(str, self.substringsToPreserve))
+        
+        print '[%s]' % ', '.join(map(str, self.oldSeperators))
+        
+        print self.seperatorToUse
+        
+        FileNamePurifier.PrintBool(self.breakUpByBraces)
+        FileNamePurifier.PrintBool(self.breakUpByParens)
+        FileNamePurifier.PrintBool(self.breakUpByBrackets)
+        FileNamePurifier.PrintBool(self.breakUpByCamelCase)
+    
+    @staticmethod
+    def PrintBool(bool):
+        if(bool):
+            print "True"
+        else:
+            print "False"
+    
+    def CreateParserWithString(self, stringToParse):
+        parser = Parser(self.stringAppendToFront, self.stringAppendToEnd, 
+                        self.removeFirstInstanceOfStringsInList, 
+                        self.removeAllInstancesOfStringsInList,
+                  self.substringsToPreserve, self.oldSeperators, self.seperatorToUse, self.breakUpByBraces, 
+                 self.breakUpByParens, 
+                 self.breakUpByBrackets, self.breakUpByCamelCase, stringToParse);
+                 
+        return parser;
+    
+    def PurifyString(self, stringToPurify):
+        return self.CreateParserWithString(stringToPurify).outputString
