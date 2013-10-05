@@ -24,30 +24,6 @@ class FileNamePurifier:
         self.breakUpByBrackets  = breakUpByBrackets
         self.breakUpByCamelCase = breakUpByCamelCase
         
-        print self.stringAppendToFront
-        print self.stringAppendToEnd
-        
-        print '[%s]' % ', '.join(map(str, self.removeFirstInstanceOfStringsInList)) 
-        print '[%s]' % ', '.join(map(str, self.removeAllInstancesOfStringsInList))
-        
-        print '[%s]' % ', '.join(map(str, self.substringsToPreserve))
-        
-        print '[%s]' % ', '.join(map(str, self.oldSeperators))
-        
-        print self.seperatorToUse
-        
-        FileNamePurifier.PrintBool(self.breakUpByBraces)
-        FileNamePurifier.PrintBool(self.breakUpByParens)
-        FileNamePurifier.PrintBool(self.breakUpByBrackets)
-        FileNamePurifier.PrintBool(self.breakUpByCamelCase)
-    
-    @staticmethod
-    def PrintBool(bool):
-        if(bool):
-            print "True"
-        else:
-            print "False"
-    
     def CreateParserWithString(self, stringToParse):
         parser = Parser(self.stringAppendToFront, self.stringAppendToEnd, 
                         self.removeFirstInstanceOfStringsInList, 

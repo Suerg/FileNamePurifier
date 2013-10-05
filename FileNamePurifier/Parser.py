@@ -380,5 +380,8 @@ class Parser:
                 
             else:
                 currentString += self.lexer.lookupTable[self.lexer.tokenList[currentTokenNumber][1]]
-                
+            
+            
+        outputStrings.append(currentString)
+        
         return outputStrings

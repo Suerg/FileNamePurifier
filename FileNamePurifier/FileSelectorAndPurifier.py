@@ -30,6 +30,7 @@ class FileSelectorAndPurifier:
                 
                 self.startPath = os.path.join(path, purifiedName)
                 
+                print self.startPath
             
             if(self.recursive):
                 self.PurifyRecurisve(self.startPath)
@@ -37,10 +38,11 @@ class FileSelectorAndPurifier:
                 self.PurifySingleDirectory(self.startPath)
             
     def PurifyFileName(self, path, name):
-        name = basename(os.path.join(path, name))
+        name = basename(name)
+        
         extension = os.path.splitext(name)[1]
         
-        purifiedName = self.fileNamePurifier.PurifyString(name)
+        purifiedName = self.fileNamePurifier.PurifyString(os.path.splitext(name)[0])
     
         FileSelectorAndPurifier.RenameFileOrDirectory(path, name, purifiedName + extension)
         
@@ -68,7 +70,8 @@ class FileSelectorAndPurifier:
     
     @staticmethod
     def RenameFileOrDirectory(pathToDir, oldName, newName):
-        os.rename(os.path.join(pathToDir, oldName), os.path.join(pathToDir, newName))
+        if(oldName != newName and len(newName) > 0):
+            os.rename(os.path.join(pathToDir, oldName), os.path.join(pathToDir, newName))
     
     def PurifySingleDirectory(self, pathToDir):
         for item in os.listdir(pathToDir):
