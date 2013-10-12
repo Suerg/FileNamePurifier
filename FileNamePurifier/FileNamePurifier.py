@@ -6,7 +6,7 @@ class FileNamePurifier:
     def __init__(self, stringAppendToFront, stringAppendToEnd, removeFirstInstanceOfStringsInList, removeAllInstancesOfStringsInList,
                   substringsToPreserve, oldSeperators, seperatorToUse, breakUpByBraces, 
                  breakUpByParens, 
-                 breakUpByBrackets, breakUpByCamelCase):
+                 breakUpByBrackets, breakUpByCamelCase, camelCaseOldSeparator, camelCaseNewSeparator):
         
         self.stringAppendToFront = stringAppendToFront
         self.stringAppendToEnd   = stringAppendToEnd
@@ -24,13 +24,18 @@ class FileNamePurifier:
         self.breakUpByBrackets  = breakUpByBrackets
         self.breakUpByCamelCase = breakUpByCamelCase
         
+        self.camelCaseOldSeparator = camelCaseOldSeparator
+        self.camelCaseNewSeparator = camelCaseNewSeparator
+        
     def CreateParserWithString(self, stringToParse):
         parser = Parser(self.stringAppendToFront, self.stringAppendToEnd, 
                         self.removeFirstInstanceOfStringsInList, 
                         self.removeAllInstancesOfStringsInList,
                   self.substringsToPreserve, self.oldSeperators, self.seperatorToUse, self.breakUpByBraces, 
                  self.breakUpByParens, 
-                 self.breakUpByBrackets, self.breakUpByCamelCase, stringToParse);
+                 self.breakUpByBrackets, self.breakUpByCamelCase, 
+                 self.camelCaseOldSeparator, self.camelCaseNewSeparator, 
+                 stringToParse);
                  
         return parser;
     

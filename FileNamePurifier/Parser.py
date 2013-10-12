@@ -12,7 +12,7 @@ class Parser:
     def __init__(self, stringAppendToFront, stringAppendToEnd, removeFirstInstanceOfStringsInList, removeAllInstancesOfStringsInList,
                   substringsToPreserve, oldSeperators, seperatorToUse, breakUpByBraces, 
                  breakUpByParens, 
-                 breakUpByBrackets, breakUpByCamelCase, originalString):
+                 breakUpByBrackets, breakUpByCamelCase, camelCaseOldSeparator, camelCaseNewSeparator, originalString):
         
         #self.substringsToPreserve = substringsToPreserve       #may not make instance variable
         self.oldSeperators        = oldSeperators
@@ -23,6 +23,8 @@ class Parser:
         self.breakUpByBrackets  = breakUpByBrackets
         self.breakUpByCamelCase = breakUpByCamelCase
     
+        self.camelCaseNewSeparator = camelCaseNewSeparator 
+    
         self.originalString = originalString
         self.lexer = LexicalAnalyzer(originalString, self.createBeginBlocks(), self.createEndBlocks(), [" "], self.breakUpByCamelCase)
         
@@ -30,9 +32,14 @@ class Parser:
         
         
         preservedList = self.stringToListPreserveStringsInList(self.outputString, substringsToPreserve)
+        
         replacedList  = self.replaceInstancesOfElementInListWithItem(preservedList, oldSeperators, 
                                                                  seperatorToUse, substringsToPreserve)
+        
         self.outputString = self.lexemeListToString(replacedList).strip()
+    
+        if(not camelCaseNewSeparator and camelCaseOldSeparator):
+            self.outputString = self.UseCamelCaseAsOldSeparator(self.outputString, seperatorToUse)
         
         for substring in removeAllInstancesOfStringsInList:
             self.outputString = self.replaceInstancesOfStringInStringWithString(substring, "", self.outputString)
@@ -45,17 +52,71 @@ class Parser:
         self.outputString += stringAppendToEnd
         
     
+    def UseCamelCaseAsOldSeparator(self, stringToUse, separatorToUse):
+        finalString = ""
+        
+        camelCaseTokenizedList = []
+        currentString = ""
+        
+        for char in stringToUse:
+            if(char >= "A" and char <= "Z"):
+                currentString += char.lower()
+                camelCaseTokenizedList.append(currentString)
+                currentString = ""
+            else:
+                currentString += char
+        
+        if(len(currentString) > 0):
+            camelCaseTokenizedList.append(currentString)
+        
+        for i in range(len(camelCaseTokenizedList)):
+            if(i < len(camelCaseTokenizedList) - 1):
+                finalString += camelCaseTokenizedList[i] + separatorToUse
+            else:
+                finalString += camelCaseTokenizedList[i]
+        
+        return finalString
+        
+    
     def replaceInstancesOfElementsInListInStringWithItem(self, listToReplace, replaceWith, inputString):
         currentString = inputString
         
-        for item in listToReplace:
-            if(len(item) > 1 or len(replaceWith) > 1):
-                currentString = self.replaceInstancesOfStringInStringWithString(item, replaceWith, currentString)
-            else:
-                currentString = self.replaceInstancesOfCharsInStringWithChar([item], replaceWith, inputString)
-                 
+        if(not self.camelCaseNewSeparator):    
+            for item in listToReplace:
+                if(len(item) > 1 or len(replaceWith) > 1):
+                    currentString = self.replaceInstancesOfStringInStringWithString(item, replaceWith, currentString)
+                else:
+                    currentString = self.replaceInstancesOfCharsInStringWithChar([item], replaceWith, inputString)
+        else:
+            currentString = self.UseCamelCaseAsNewSeparator(listToReplace, inputString)
+            
         return currentString
     
+    def UseCamelCaseAsNewSeparator(self, oldSeparatorList, inputString):
+        newString = ""
+        
+        print inputString
+        
+        charList = list()
+        
+        for char in inputString:
+            charList.append(char)
+        
+        for i in range(len(inputString)):
+            if(inputString[i] in oldSeparatorList):
+                if(i - 1 >= 0):
+                    charList[i - 1] = charList[i - 1].upper()
+                
+                if(len(inputString) - 1 > i):
+                    charList[i + 1] = charList[i + 1].upper()
+                    
+                charList[i] = ""
+        
+        for char in charList:
+            newString += char
+        
+        return newString
+        
     def removeFirstInstanceOfStringFromString(self, stringToRemove, inputString):
         seperatedString = self.stringToListPreserveStringsInList(inputString, [stringToRemove])
         
@@ -93,9 +154,10 @@ class Parser:
        
     def replaceInstancesOfElementInListWithItem(self, stringsToCheck, toReplace, replaceWith, stringsToPreserve):
         newList = list(stringsToCheck)
+        
         for stringIndex in range(len(stringsToCheck)):
             if((stringsToCheck[stringIndex] in stringsToPreserve) == False):
-                newList[stringIndex] = self.replaceInstancesOfElementsInListInStringWithItem(toReplace, 
+                    newList[stringIndex] = self.replaceInstancesOfElementsInListInStringWithItem(toReplace, 
                                                                                          replaceWith, 
                                                                                          stringsToCheck[stringIndex])
         return newList
