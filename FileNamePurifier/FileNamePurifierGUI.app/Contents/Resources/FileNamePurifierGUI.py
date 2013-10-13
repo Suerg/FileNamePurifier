@@ -6,6 +6,8 @@ from Tkconstants import DISABLED, NORMAL, END
 from FileNamePurifier import FileNamePurifier
 from FileSelectorAndPurifier import FileSelectorAndPurifier
 
+import tkMessageBox
+
 import os
 
 class FileNamePurifierGUI(Frame):
@@ -118,30 +120,77 @@ class FileNamePurifierGUI(Frame):
         
         return newSeparator
     
+    def ReadOldSeparatorList(self):
+        oldSeparatorList = []
+        
+        if(self.oldSpacesButton.get()):
+            oldSeparatorList.append(" ")
+            
+        if(self.oldUnderscoresButton.get()):
+            oldSeparatorList.append("_")
+        
+        if(self.oldPeriodButton.get()):
+            oldSeparatorList.append(".")
+            
+        return oldSeparatorList
+    
     def CreatePurifierForOptions(self):
         
         purifier = FileNamePurifier(self.finalAppendToFrontText, self.finalAppendToEndText, 
                     [self.finalRemoveFirstInstanceText], [],
-                  [], [" ", "_"], self.GetNewSeparator(), self.breakUpByBraces.get(), 
+                  [], self.ReadOldSeparatorList(), self.GetNewSeparator(), self.breakUpByBraces.get(), 
                  self.breakUpByParens.get(), 
-                 self.breakUpByBrackets.get(), self.breakUpByCamelCase.get())
+                 self.breakUpByBrackets.get(), self.breakUpByCamelCase.get(), 
+                 self.oldCamelcaseButton.get(), self.camelcaseButton.get())
         
         return purifier
     
     def purifyFiles(self):
-        if(hasattr(self, "finalRemoveFirstInstanceText")):
-            #self.addDirectoryText(self.finalRemoveFirstInstanceText)
-            pass
-        
         if(len(self.directoryText.get("0.0", END)) > 0):            
             selectorAndPurifier = FileSelectorAndPurifier(self.affectSubfolders.get(), self.cleanFolderNames.get(), 
                                         self.directoryText.get("0.0", END), self.CreatePurifierForOptions())
             
+            tkMessageBox.showinfo("FileNamePurifier", "Purifying FileNames. Please Wait.")
+            
             selectorAndPurifier.PurifyFileNames()
+            
+            tkMessageBox.showinfo("FileNamePurifier", "FileName Purification Complete!")
+    
+    
+    def CreateOldSeparatorMenu(self):
+        self.oldSeparatorMenu = Menu(self.optionsMenu, tearoff=0)
         
+        self.oldSpacesButton      = BooleanVar()
+        self.oldUnderscoresButton = BooleanVar()
+        self.oldCamelcaseButton  = BooleanVar()
+        self.oldPeriodButton     = BooleanVar()
+        
+        self.oldSeparatorMenu.add_checkbutton(label="Spaces", onvalue=True, offvalue=False, 
+                                              variable=self.oldSpacesButton)
+        
+        self.oldSpacesButton.set(True)
+        
+        self.oldSeparatorMenu.add_checkbutton(label="Underscores", onvalue=True, offvalue=False, 
+                                              variable=self.oldUnderscoresButton)
+        
+        self.oldUnderscoresButton.set(True)
+            
+        #self.oldSeparatorMenu.add_command(label="Custom Separator", command=self.customSeparatorFrame)
+
+        self.oldSeparatorMenu.add_checkbutton(label="CamelCase", onvalue=True, offvalue=False, 
+                                              variable=self.oldCamelcaseButton)
+                
+        self.oldSeparatorMenu.add_checkbutton(label="Period", onvalue=True, offvalue=False, 
+                                              variable=self.oldPeriodButton)
+        
+        self.optionsMenu.add_cascade(label="Old Separator", menu=self.oldSeparatorMenu)
+
+    
     def addSubMenus(self):
         
-        self.createSeparatorMenu()
+        self.CreateOldSeparatorMenu()
+        
+        self.createNewSeparatorMenu()
         
         self.addSubCheckbuttons()
     
@@ -298,7 +347,7 @@ class FileNamePurifierGUI(Frame):
         self.camelcaseButton.set(False)
         self.underscoresButton.set(False)
         
-    def createSeparatorMenu(self):
+    def createNewSeparatorMenu(self):
         self.newSeparatorMenu = Menu(self.optionsMenu, tearoff=0)
         
         self.spacesButton      = BooleanVar()
