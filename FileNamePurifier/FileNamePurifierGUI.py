@@ -6,6 +6,8 @@ from Tkconstants import DISABLED, NORMAL, END
 from FileNamePurifier import FileNamePurifier
 from FileSelectorAndPurifier import FileSelectorAndPurifier
 
+import tkMessageBox
+
 import os
 
 class FileNamePurifierGUI(Frame):
@@ -129,6 +131,8 @@ class FileNamePurifierGUI(Frame):
         
         if(self.oldPeriodButton.get()):
             oldSeparatorList.append(".")
+            
+        return oldSeparatorList
     
     def CreatePurifierForOptions(self):
         
@@ -146,7 +150,12 @@ class FileNamePurifierGUI(Frame):
             selectorAndPurifier = FileSelectorAndPurifier(self.affectSubfolders.get(), self.cleanFolderNames.get(), 
                                         self.directoryText.get("0.0", END), self.CreatePurifierForOptions())
             
+            tkMessageBox.showinfo("FileNamePurifier", "Purifying FileNames. Please Wait.")
+            
             selectorAndPurifier.PurifyFileNames()
+            
+            tkMessageBox.showinfo("FileNamePurifier", "FileName Purification Complete!")
+    
     
     def CreateOldSeparatorMenu(self):
         self.oldSeparatorMenu = Menu(self.optionsMenu, tearoff=0)
