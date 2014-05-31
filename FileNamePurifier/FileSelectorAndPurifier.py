@@ -68,7 +68,11 @@ class FileSelectorAndPurifier:
     @staticmethod
     def RenameFileOrDirectory(pathToDir, oldName, newName):
         if(oldName != newName and len(newName) > 0):
-            os.rename(os.path.join(pathToDir, oldName), os.path.join(pathToDir, newName))
+            #TODO: add message about locked files
+            try:
+                os.rename(os.path.join(pathToDir, oldName), os.path.join(pathToDir, newName))
+            except:
+                pass
     
     def PurifySingleDirectory(self, pathToDir):
         for item in os.listdir(pathToDir):
